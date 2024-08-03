@@ -1,0 +1,75 @@
+classdef PruebaProyecto
+    %PruebaProyecto App de PID
+    
+    properties
+        nameAndPath
+        imageMatrix
+        imageMap
+        binaryImage
+        grayScaleImage
+        imageHistogram
+        imageInfo
+        equalizedImage
+        invertedImage
+        addImage
+        eqHistogram
+    end
+
+    methods
+        function obj = PruebaProyecto()
+            %UNTITLED Construct an instance of this class
+            %   Detailed explanation goes here
+            [locFile, imageStruct] = readImage();
+            obj.nameAndPath = locFile;
+            obj.imageMatrix = imageStruct.imageMatrix;
+            obj.imageMap = imageStruct.map;
+            obj.imageInfo = imageStruct.imageInfo;
+            obj.grayScaleImage = obj.toGrayScale.grayScaleImage;
+            obj.binaryImage = obj.binarizeImage.binaryImage;
+            obj.imageHistogram = obj.getHistogram.imageHistogram;
+        end
+
+        function [PruebaProyecto] = binarizeImage(PruebaProyecto)
+            binImage = imbinarize(PruebaProyecto.imageMatrix);
+            PruebaProyecto.binaryImage = binImage;
+        end
+
+        function [PruebaProyecto] = toGrayScale(PruebaProyecto)
+            PruebaProyecto.grayScaleImage = ind2gray(PruebaProyecto.imageMatrix, PruebaProyecto.imageMap);
+        end
+
+        function [PruebaProyecto] = changeDepth(PruebaProyecto,value)
+            PruebaProyecto.imageMap = gray(value);
+            PruebaProyecto.imageInfo.depth = value;
+        end
+
+        function [PruebaProyecto] = getHistogram(PruebaProyecto)
+            PruebaProyecto.imageHistogram = imhist(PruebaProyecto.grayScaleImage);
+        end
+
+        function [PruebaProyecto] = getEqHist(PruebaProyecto)
+            PruebaProyecto.eqHistogram = imhist(PruebaProyecto.equalizedImage);
+        end
+
+        function [PruebaProyecto] = updateGrayScaleWithMap(PruebaProyecto, map)
+            PruebaProyecto.grayScaleImage = ind2gray(PruebaProyecto.imageMatrix, map);
+        end
+
+        function [PruebaProyecto] = equalizeImage(PruebaProyecto)
+            PruebaProyecto.equalizedImage = histeq(PruebaProyecto.grayScaleImage);
+        end
+
+        function [PruebaProyecto] = invertImage(PruebaProyecto)
+            PruebaProyecto.invertedImage = imcomplement(PruebaProyecto.grayScaleImage);
+        end
+        function [PruebaProyecto] = photoInvertImage(PruebaProyecto)
+            PruebaProyecto.invertedImage = 255 - (PruebaProyecto.grayScaleImage);
+        end
+        function [PruebaProyecto] = AddToImage(PruebaProyecto,img2,w,h)
+            w;
+            h;
+            img2 =  imresize(img2,[w h]);
+            PruebaProyecto.addImage = PruebaProyecto.grayScaleImage + img2;
+        end
+    end
+end
